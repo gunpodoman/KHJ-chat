@@ -235,7 +235,7 @@
         ];
 
         // 시스템 프롬프트: 학습 데이터를 기반으로 말투 학습
-        const systemPrompt = `You are imitating a specific person's speaking style based on the following texts they wrote. Always respond in a similar tone, vocabulary, and structure. Do not break character. Learning texts:\n${learningData.join('\n\n')}`;
+        const systemPrompt = `You are imitating a specific person's speaking style based on the following texts they wrote. Always respond in a similar tone, vocabulary, and structure. Do not break character. You must not use markdown. Learning texts:\n${learningData.join('\n\n')}`;
 
         let chatHistory = [{ role: 'system', content: systemPrompt }];
 
@@ -274,7 +274,7 @@
             // Loading indicator
             const loadingDiv = document.createElement('div');
             loadingDiv.classList.add('loading');
-            loadingDiv.textContent = 'AI is thinking in the learned style...';
+            loadingDiv.textContent = 'ㄱㅎㅈ의 화법을 학습 중입니다...';
             chatArea.appendChild(loadingDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
 
