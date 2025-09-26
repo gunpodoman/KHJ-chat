@@ -70,18 +70,6 @@
             font-size: 0.875rem;
         }
 
-        #api-key {
-            padding: 8px;
-            border: none;
-            border-radius: 4px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        #api-key::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
         /* Chat Area */
         .chat-area {
             flex: 1;
@@ -223,8 +211,6 @@
         <div class="header">
             <h1>Custom AI Chat with Learned Style</h1>
             <div class="settings">
-                <label for="api-key">Groq API Key:</label>
-                <input type="password" id="api-key" placeholder="Enter Groq API Key">
                 <span class="theme-toggle" onclick="toggleTheme()">🌙</span>
             </div>
         </div>
@@ -239,7 +225,6 @@
         const chatArea = document.getElementById('chat-area');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const apiKeyInput = document.getElementById('api-key');
 
         // 학습 데이터: 여기서 특정 인물의 글을 배열로 저장. 사용자가 직접 수정/추가 가능.
         // 예시 데이터 (실제 데이터로 교체하세요. 더 추가할 수 있음).
@@ -253,7 +238,6 @@
         const systemPrompt = `You are imitating a specific person's speaking style based on the following texts they wrote. Always respond in a similar tone, vocabulary, and structure. Do not break character. Learning texts:\n${learningData.join('\n\n')}`;
 
         let chatHistory = [{ role: 'system', content: systemPrompt }];
-        let apiKey = '';
 
         // Auto-resize textarea
         userInput.addEventListener('input', () => {
@@ -280,10 +264,7 @@
         // Handle send
         async function sendMessage() {
             const message = userInput.value.trim();
-            if (!message || !apiKey) {
-                if (!apiKey) alert('Please enter your Groq API Key.');
-                return;
-            }
+            if (!message) return;
 
             addMessage(message, true);
             userInput.value = '';
@@ -301,17 +282,13 @@
             chatHistory.push({ role: 'user', content: message });
 
             try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${apiKey}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        messages: chatHistory,
-                        model: 'openai/gpt-oss-120b',
-                        temperature: 0.7,
-                        max_tokens: 1024
+                        messages: chatHistory
                     })
                 });
 
@@ -320,7 +297,7 @@
                 }
 
                 const data = await response.json();
-                const aiResponse = data.choices[0].message.content.trim();
+                const aiResponse = data.aiResponse.trim();
                 chatHistory.push({ role: 'assistant', content: aiResponse });
 
                 // Remove loading
@@ -345,12 +322,8 @@
             }
         });
 
-        apiKeyInput.addEventListener('input', () => {
-            apiKey = apiKeyInput.value.trim();
-        });
-
         // Initial message
-        addMessage('환영합니다! 특정 인물의 말투를 따라하는 AI 채팅입니다. 학습 데이터를 기반으로 응답할게요. API 키를 입력하고 메시지를 보내세요.', false);
+        addMessage('환영합니다! 특정 인물의 말투를 따라하는 AI 채팅입니다. 학습 데이터를 기반으로 응답할게요. 메시지를 보내세요.', false);
     </script>
 </body>
 </html>
